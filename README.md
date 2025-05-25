@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Mini-it
 
-## Getting Started
+## Description
+Mini-it is a minimal URL shortener application that allows users to create shortened versions of long URLs.
 
-First, run the development server:
+## Features
+- URL shortening: Converts long URLs into shorter, more manageable links.
+- Redirection: Redirects users from the shortened URL to the original long URL.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Tech Stack
+- Next.js
+- React
+- Tailwind CSS
+- PostgreSQL
+
+## Prerequisites
+To run this project locally, you will need:
+- Node.js (v16 or later)
+- npm
+- A running PostgreSQL database instance
+
+## Environment Variables
+Create a `.env.local` file in the root of the project and add the following environment variables:
+
+```
+DB_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE"
+NEXT_PUBLIC_BASE_URL="http://localhost:3000"
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- `DB_URL`: The connection string for your PostgreSQL database. Replace `USER`, `PASSWORD`, `HOST`, `PORT`, and `DATABASE` with your actual database credentials and information.
+- `NEXT_PUBLIC_BASE_URL`: The base URL for your application. This is used to construct the shortened URLs. For local development, this is typically `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Database Setup
+The application requires a PostgreSQL table named `urls` to store the mapping between original and shortened URLs.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+You can create this table using the following SQL command:
 
-## Learn More
+```sql
+CREATE TABLE urls (
+    id SERIAL PRIMARY KEY,
+    original_url TEXT NOT NULL,
+    short_code VARCHAR(10) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Getting Started
+Follow these steps to get the project up and running on your local machine:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/your-username/mini-it.git
+    cd mini-it
+    ```
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
+3.  **Set up the `.env.local` file:**
+    Create a `.env.local` file in the project root and add your `DB_URL` and `NEXT_PUBLIC_BASE_URL` as described in the "Environment Variables" section.
+4.  **Database Setup:**
+    Ensure your PostgreSQL database server is running and you have created the `urls` table using the SQL command provided in the "Database Setup" section.
+5.  **Run the development server:**
+    ```bash
+    npm run dev
+    ```
+    Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Available Scripts
+- `npm run dev`: Starts the development server with hot reloading.
+- `npm run build`: Builds the application for production.
+- `npm run start`: Starts a production server (requires a prior `npm run build`).
+- `npm run lint`: Lints the codebase using Next.js's built-in ESLint configuration.
 
-## Deploy on Vercel
+## API Endpoints
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### `POST /api/shorten`
+-   **Description:** Creates a new shortened URL.
+-   **Request Body:**
+    ```json
+    {
+        "url": "your_long_url_here"
+    }
+    ```
+-   **Success Response (200 OK):**
+    ```json
+    {
+        "shortenedUrl": "http://localhost:3000/your_short_code"
+    }
+    ```
+-   **Error Responses:**
+    -   `400 Bad Request`: If the `url` is missing or invalid.
+    -   `500 Internal Server Error`: If there's an issue with the database or generating the short code.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deployment
+This is a Next.js application and can be easily deployed to platforms that support Node.js applications, such as:
+- Vercel (Recommended for Next.js)
+- Netlify
+- AWS Amplify
+- Heroku
+
+Ensure your environment variables (`DB_URL` and `NEXT_PUBLIC_BASE_URL`) are correctly set up on your deployment platform.
+
+## Contributing
+Contributions are welcome! Please fork the repository and submit a pull request with your changes.
+
+## License
+This project is licensed under the MIT License.
